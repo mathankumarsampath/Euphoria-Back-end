@@ -1,0 +1,47 @@
+### Django ### 
+*.pyc
+*.DS_Store
+
+**/migrations/
+/migrations/
+!/migrations
+!/migrations/init.py
+
+/pycache/
+*.log
+
+# Migrations
+*/migrations/
+!/migrations/init.py
+
+# Database
+db.sqlite3
+db.sqlite3-journal
+venv
+.env
+
+
+media/**
+!media/static
+
+.vscode
+*.ini
+.git_credentials
+gitpush
+
+# VSCode
+.vscode
+
+# Ignore Static and Media files
+staticfiles/
+static/
+media/
+!media/.gitkeep
+
+# Environment
+venv
+env
+.venv
+
+# Redis Database Files
+*.rdb
