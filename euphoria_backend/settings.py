@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+from django.core.wsgi import get_wsgi_application
 import environ
 import dj_database_url
 
@@ -12,9 +13,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 env.read_env(os.path.join(BASE_DIR, '.env')) # Reads .env file
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'euphoria_backend.settings')
+application = get_wsgi_application()
 
 # SECURITY
-SECRET_KEY = env("SECRET_KEY",  default="django-insecure-qnw-=mz@x31vi=$a4vnynt6u#o137m@)_)$uk5nmncjkkpcc#e")
+SECRET_KEY = env("SECRET_KEY",  default="qnw-=mz@x31vi=$a4vnynt6u#o137m@)_)$uk5nmncjkkpcc#e")
 DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
