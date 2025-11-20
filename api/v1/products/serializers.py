@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer
-from products.models import Product, Feature, Category, Brand, Gallery
 from rest_framework import serializers
+from products.models import Product, Feature, Category, Brand, Gallery
+from orders.models import Order
 
 
         
@@ -70,4 +71,14 @@ class ProductDetailSerializer(ModelSerializer):
     
     def get_size(self, obj):
         return [size.size for size in obj.size.all()]
-        
+
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()  # Return the username as a string
+    product = serializers.StringRelatedField()  # Return the product name as a string
+
+    class Meta:
+        model = Order
+        fields = ['user', 'product', 'quantity', 'total_price', 'date_ordered']
+  

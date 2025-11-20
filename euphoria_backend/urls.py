@@ -12,7 +12,6 @@ urlpatterns = [
     path('api/auth/', include('authentication.urls')),
     path('api/v1/', include('api.v1.products.urls')),
     path('api/v1/wishlist/', include('api.v1.wishlist.urls')),
-    path('user/', include('orders.urls')), 
 ]
 
 if settings.DEBUG:

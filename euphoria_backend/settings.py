@@ -1,31 +1,39 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-from django.core.wsgi import get_wsgi_application
 import environ
 import dj_database_url
 
-
-# Base directory
+# ---------------------------------------------------
+# BASE DIRECTORY
+# ---------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Initialize environment variables
+# ---------------------------------------------------
+# ENVIRONMENT VARIABLES
+# ---------------------------------------------------
 env = environ.Env()
-env.read_env(os.path.join(BASE_DIR, '.env')) # Reads .env file
+env.read_env(os.path.join(BASE_DIR, '.env'))
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'euphoria_backend.settings')
-application = get_wsgi_application()
+# ❌ REMOVE THESE (they break django)
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'euphoria_backend.settings')
+# application = get_wsgi_application()
 
-# SECURITY
-SECRET_KEY = env("SECRET_KEY",  default="qnw-=mz@x31vi=$a4vnynt6u#o137m@)_)$uk5nmncjkkpcc#e")
+# ---------------------------------------------------
+# SECURITY & DEBUG SETTINGS
+# ---------------------------------------------------
+SECRET_KEY = env("SECRET_KEY", default="")
 DEBUG = env.bool("DEBUG", default=False)
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
-# Login redirect
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
+
 LOGIN_REDIRECT_URL = '/dashboard/'
 
-# Application definition
+# ---------------------------------------------------
+# APPLICATIONS
+# ---------------------------------------------------
 INSTALLED_APPS = [
+    # Django Defaults
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -33,22 +41,28 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third Party
     'rest_framework',
     'rest_framework_simplejwt',
+    'corsheaders',
 
+    # Your Apps
     'api',
     'authentication',
     'products',
     'wishlist',
     'orders',
-
-    'corsheaders',
 ]
 
-# Middleware
+# ---------------------------------------------------
+# MIDDLEWARE
+# ---------------------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  
+
+    # Static file serving in production
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,18 +72,21 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ---------------------------------------------------
 # CORS
-CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS", default=["*"])
+# ---------------------------------------------------
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["http://localhost:3000"])
 CORS_ALLOW_CREDENTIALS = True
 
-# URL configuration
+# ---------------------------------------------------
+# URLS / TEMPLATES / WSGI
+# ---------------------------------------------------
 ROOT_URLCONF = 'euphoria_backend.urls'
 
-# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,49 +99,60 @@ TEMPLATES = [
     },
 ]
 
-# WSGI
 WSGI_APPLICATION = 'euphoria_backend.wsgi.application'
 
-# Database
+# ---------------------------------------------------
+# DATABASE
+# ---------------------------------------------------
 DATABASES = {
     'default': dj_database_url.config(
         default=env('DATABASE_URL'),
         conn_max_age=600,
-        ssl_require=True
+        ssl_require=False,
     )
 }
 
-# Password validation
+# ---------------------------------------------------
+# PASSWORD VALIDATION
+# ---------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# ---------------------------------------------------
+# AUTHENTICATION
+# ---------------------------------------------------
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# Internationalization
+# ---------------------------------------------------
+# INTERNATIONALIZATION
+# ---------------------------------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
-STATIC_URL = 'static/'
+# ---------------------------------------------------
+# STATIC & MEDIA FILES
+# ---------------------------------------------------
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# Default auto field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Logging
+# ---------------------------------------------------
+# LOGGING
+# ---------------------------------------------------
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -144,7 +172,9 @@ LOGGING = {
     },
 }
 
-# REST Framework
+# ---------------------------------------------------
+# REST FRAMEWORK
+# ---------------------------------------------------
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
@@ -156,7 +186,9 @@ REST_FRAMEWORK = {
     ],
 }
 
-# Simple JWT
+# ---------------------------------------------------
+# JWT CONFIGURATION
+# ---------------------------------------------------
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=6),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
