@@ -81,4 +81,12 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['user', 'product', 'quantity', 'total_price', 'date_ordered']
+
+
+class AddToCartSerializer(serializers.Serializer):
+    quantity = serializers.IntegerField(min_value=1)
+
+
+class BuyNowSerializer(serializers.Serializer):
+    quantity = serializers.IntegerField(min_value=1)
   
